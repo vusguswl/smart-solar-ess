@@ -81,4 +81,23 @@ def run_ess_sim(generation, consumption, capacity, efficiency):
             discharge_limit = soc * eff
             if discharge_limit >= need:
                 soc -= (need / eff)
-                grid_with_ess.
+                grid_with_ess.append(0.0)
+            else:
+                rem = need - discharge_limit
+                soc = 0.0
+                grid_with_ess.append(rem)
+                
+        soc_history.append(round(soc, 2))
+        
+    return soc_history, grid_no_ess, grid_with_ess
+
+# -------------------------------------------------------------------
+# 4. Streamlit 화면 구성 (웹UI & 폰트 안 깨지는 영문 차트)
+# -------------------------------------------------------------------
+st.title("☀️ 가정용 태양광-ESS 에너지 효율 시뮬레이터")
+st.markdown("기상청 **실시간 일사량 API 데이터**를 활용해, 배터리(ESS) 설치 후 **우리 집 외부 전력 구매량이 얼마나 줄어드는지** 한눈에 비교해보세요.")
+
+# 사이드바 설정
+st.sidebar.header("⚙️ 시뮬레이션 조건 설정")
+yesterday = datetime.now() - timedelta(days=1)
+selected_date = st.sidebar.
