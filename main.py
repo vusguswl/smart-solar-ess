@@ -54,7 +54,7 @@ def fetch_solar_data(target_date):
         pass
     
     # 예외 처리용 백업 표준 일사량 데이터
-    return [0,0,0,0,0,0, 0.1,0.5,1.2,1.8,2.3,2.5, 2.6,2.4,2.0,1.4,0.7,0.2, 0,0,0,0,0,0], False
+    return [0, 0, 0, 0, 0, 0, 0.1, 0.5, 1.2, 1.8, 2.3, 2.5, 2.6, 2.4, 2.0, 1.4, 0.7, 0.2, 0, 0, 0, 0, 0, 0], False
 
 # -------------------------------------------------------------------
 # 3. ESS 시뮬레이션 핵심 연산 알고리즘
@@ -81,54 +81,4 @@ def run_ess_sim(generation, consumption, capacity, efficiency):
             discharge_limit = soc * eff
             if discharge_limit >= need:
                 soc -= (need / eff)
-                grid_with_ess.append(0.0)
-            else:
-                rem = need - discharge_limit
-                soc = 0.0
-                grid_with_ess.append(rem)
-                
-        soc_history.append(round(soc, 2))
-        
-    return soc_history, grid_no_ess, grid_with_ess
-
-# -------------------------------------------------------------------
-# 4. Streamlit 화면 구성 (웹UI & 폰트 안 깨지는 영문 차트)
-# -------------------------------------------------------------------
-st.title("☀️ 가정용 태양광-ESS 에너지 효율 시뮬레이터")
-st.markdown("기상청 **실시간 일사량 API 데이터**를 활용해, 배터리(ESS) 설치 후 **우리 집 외부 전력 구매량이 얼마나 줄어드는지** 한눈에 비교해보세요.")
-
-# 사이드바 설정
-st.sidebar.header("⚙️ 시뮬레이션 조건 설정")
-yesterday = datetime.now() - timedelta(days=1)
-selected_date = st.sidebar.date_input("조회 날짜 선택", yesterday).strftime("%Y%m%d")
-
-st.sidebar.subheader("1. 태양광 패널 사양")
-panel_area = st.sidebar.slider("패널 면적 (m²)", 5, 50, 20)
-panel_eff = st.sidebar.slider("패널 변환 효율 (%)", 10, 25, 18)
-
-st.sidebar.subheader("2. ESS 배터리 사양")
-ess_cap = st.sidebar.slider("배터리 용량 (kWh)", 0, 30, 10)
-ess_eff = st.sidebar.slider("충·방전 효율 (%)", 50, 100, 90)
-
-# 데이터 연산
-raw_rad, is_api = fetch_solar_data(selected_date)
-gen_data = [round(r * panel_area * (panel_eff / 100.0), 2) for r in raw_rad]
-con_data = HOURLY_CONSUMPTION_MODEL
-
-soc_list, buy_no_ess, buy_with_ess = run_ess_sim(gen_data, con_data, ess_cap, ess_eff)
-
-total_gen = sum(gen_data)
-total_con = sum(con_data)
-total_buy_no = sum(buy_no_ess)
-total_buy_with = sum(buy_with_ess)
-saved_kwh = total_buy_no - total_buy_with
-save_percent = (saved_kwh / total_buy_no * 100) if total_buy_no > 0 else 0
-
-if is_api:
-    st.caption(f"🌐 기상청 공공데이터 API 연동 완료 (조회일자: {selected_date})")
-
-# --- 1. 대형 수치 표시 카드 ---
-st.markdown("---")
-m1, m2, m3, m4 = st.columns(4)
-m1.metric("하루 태양광 발전량", f"{total_gen:.1f} kWh")
-m2.metric("가정 총 전력 소비량",
+                grid_with_ess.
